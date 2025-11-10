@@ -1,107 +1,116 @@
-## **Playwright QA Automation Project**
+# Playwright QA Automation Project
 
-This project is a **Quality Assurance automation suite** built with **Playwright**.
-It demonstrates both **UI testing** and **API testing practices** commonly used in real QA roles.
+This project demonstrates real-world **UI** and **API** test automation using **Playwright**.  
+It showcases login session handling, end-to-end shopping workflow, and API testing (mocked to avoid external dependency failures).
 
-### What This Project Tests
 
-| Area                        | What’s Being Tested                         | Tools Used                          |
-| --------------------------- | ------------------------------------------- | ----------------------------------- |
-| **UI E2E Flow**             | Login → Add product to cart → Checkout      | Playwright (browser tests)          |
-| **Authentication Handling** | Save login session to avoid repeated logins | Storage State in Playwright         |
-| **API Testing (Mocked)**    | Create + Delete article workflow            | Playwright API Requests (with mock) |
+## Features
 
----
+### UI End-to-End Tests (SauceDemo)
+- Login (executed **once**, session reused for all tests)
+- Add product to cart
+- Complete checkout process
 
-## **Tech Stack**
+### API Test (Mocked)
+The public RealWorld API is unreliable, so the project includes a **mocked API workflow** that:
+- Logs in
+- Creates an article
+- Deletes the article
 
-* **Playwright** (UI + API testing)
-* **JavaScript / Node.js**
-* **Mocked API Responses** (stable & reliable for demo/testing)
-* **Git-ready project** — can be pushed directly to GitHub
+This demonstrates **API request handling and validation** without depending on unstable external servers.
 
----
 
-## **Project Structure**
+## Tech Stack
+
+| Tool | Purpose |
+|------|---------|
+| **Playwright** | UI & API automation |
+| **Node.js / JavaScript** | Test language and runtime |
+| **Storage State** | Saves login session for reuse |
+| **Mock API** | Stable API testing workflow |
+
+
+## Project Structure
+
+```
 
 playwright/
+├── tests/
+│   ├── setup-login.spec.js       # Saves login session once
+│   ├── login.spec.js             # Skipped after session reuse
+│   ├── add-to-cart.spec.js       # UI test
+│   ├── checkout.spec.js          # UI test
+│   └── api-products.spec.js      # Mock API test
+└── .auth/
+└── user.json                 # Saved login session
+playwright.config.js                # Global Playwright config
 
-  ├── tests/
-  
-  │   ├── setup-login.spec.js       # Saves session (run once)
-  
-  │   ├── login.spec.js             # Skipped after using storage state
-  
-  │   ├── add-to-cart.spec.js       # UI: Add product to cart
-  
-  │   ├── checkout.spec.js          # UI: Full purchase flow
-  
-  │   └── api-products.spec.js      # Mock API: Create & delete article
-  
-  └── .auth/
-  
-      └── user.json                 # Saved login session
-      
-playwright.config.js                # Global test config
+```
 
 ---
 
-## **How the Login Session Works**
+## How Login Session Reuse Works
 
-Instead of logging in before every test:
+1. `setup-login.spec.js` signs into SauceDemo.
+2. Playwright stores the authenticated session in:
+```
 
-1. `setup-login.spec.js` logs in once.
-2. The auth session is saved to `playwright/.auth/user.json`.
-3. All UI tests reuse this session → **no repeated login**, **faster**, **more stable**.
+playwright/.auth/user.json
+
+````
+3. Other UI tests use this saved session → **no repeated logins**.
+
+**Benefits:**  
+1. Faster test runs  
+2. Eliminates login flakiness  
+3. Reflects industry best practice
 
 ---
 
-## **How to Run the Project**
+## How to Run Tests
 
-### 1. Install dependencies
-
+### Install dependencies
+```bash
 npm install
+````
 
-### 2. Run initial login & save session (first time only)
+### Run login once (first time only)
 
+```bash
 npx playwright test playwright/tests/setup-login.spec.js
+```
 
-### 3. Run all tests
+### Run all tests
 
+```bash
 npx playwright test
+```
 
-### 4. (Optional) Open Playwright Test Runner UI
+### (Optional) Run with visual test runner
 
+```bash
 npx playwright test --ui
+```
 
----
 
-## **UI Tests Explained in Simple Language**
+## UI Test Flows (Simple Explanation)
 
-| Test         | What it Does                                               | Why It's Important                   |
-| ------------ | ---------------------------------------------------------- | ------------------------------------ |
-| Add to Cart  | Clicks a product → Adds to cart → Verifies cart count      | Shows interactive UI workflow        |
-| Checkout     | Goes through checkout with form data → Confirms completion | Demonstrates full user journey       |
-| Session Save | Logs in once and stores session token                      | Real companies optimize test runtime |
+| Test             | What It Does                                          | Why It Matters                         |
+| ---------------- | ----------------------------------------------------- | -------------------------------------- |
+| **Add to Cart**  | Chooses product → Adds to cart → Verifies badge count | Shows UI interactions & assertions     |
+| **Checkout**     | Completes full purchase steps                         | Demonstrates end-to-end coverage       |
+| **Session Save** | Saves login session to file                           | Real QA environments use session reuse |
 
----
 
-## **API Test (Mocked)**
+## API Test (Mocked)
 
-Because the public RealWorld API is unstable, this project uses a **mock API response** so your tests are:
+The **mock API test** demonstrates:
 
-* Repeatable
-* Fast
-* Reliable
-* Independent of external failures
+* Sending authenticated API requests
+* Creating & deleting data
+* Validating responses
 
-The test simulates:
+This avoids failures caused by:
 
-1. Login
-2. Create an article
-3. Delete the article
-
-This showcases **API testing logic** without requiring a real backend.
-
----
+> DNS errors, 404s, or offline public REST APIs.
 
