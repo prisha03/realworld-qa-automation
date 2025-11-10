@@ -25,14 +25,23 @@ It demonstrates both **UI testing** and **API testing practices** commonly used 
 ## **Project Structure**
 
 playwright/
+
   ├── tests/
+  
   │   ├── setup-login.spec.js       # Saves session (run once)
+  
   │   ├── login.spec.js             # Skipped after using storage state
+  
   │   ├── add-to-cart.spec.js       # UI: Add product to cart
+  
   │   ├── checkout.spec.js          # UI: Full purchase flow
+  
   │   └── api-products.spec.js      # Mock API: Create & delete article
+  
   └── .auth/
+  
       └── user.json                 # Saved login session
+      
 playwright.config.js                # Global test config
 
 ---
