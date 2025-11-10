@@ -10,4 +10,3 @@ test('User can add an item to the cart', async ({ page }) => {
 
   await expect(page.getByText('Sauce Labs Backpack')).toBeVisible();
 });
-
